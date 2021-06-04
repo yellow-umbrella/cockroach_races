@@ -10,8 +10,7 @@ enum RaceState {
 
 class Competition {
 public:
-    Competition();
-    ~Competition();
+    Competition() = default;
     void init(int money);
 
     int run();
@@ -43,7 +42,7 @@ private:
     int prize;
     int winner;
 
-    Player* players[MAX_NUM_PLAYERS];
-    Cockroach* cockroaches[MAX_NUM_COCKROACHES];
+    std::vector<Player> players;
+    std::vector<Cockroach> cockroaches;
 };
 

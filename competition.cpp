@@ -4,29 +4,6 @@
 
 using namespace std;
 
-Competition::Competition() : num_cockroaches(0), num_players(0), num_races(0) {
-    for (int i = 0; i < 100; i++) {
-        players[i] = nullptr;
-        cockroaches[i] = nullptr;
-    }
-    srand(time(0));
-}
-
-Competition::~Competition() {
-    for (int i = 0; i < MAX_NUM_PLAYERS; i++) {
-        if (players[i] != nullptr) {
-            delete players[i];
-            players[i] = nullptr;
-        }
-    }
-    for (int i = 0; i < MAX_NUM_COCKROACHES; i++) {
-        if (cockroaches[i] != nullptr) {
-            delete cockroaches[i];
-            cockroaches[i] = nullptr;
-        }
-    }
-}
-
 void Competition::init(int money) {
     num_races = input_int("Enter number of races", 1, MAX_NUM_RACES);
     num_players = input_int("Enter number of players", 1, MAX_NUM_PLAYERS);
@@ -34,8 +11,9 @@ void Competition::init(int money) {
     clear_enter();
 
     for (int i = 0; i < num_players; i++) {
-        players[i] = new Player(i, MAX_NUM_RACES);
+        players.push_back(Player(i, MAX_NUM_RACES));
     }
+    cockroaches.resize(num_cockroaches);
     main_player.money = money;
     main_player.wins = 0;
     main_player.last_prize = 0;
@@ -58,8 +36,7 @@ int Competition::run() {
 bool Competition::simulate_race(int n) {
     cout << "Race №" << n + 1 << "\n";
     for (int i = 0; i < num_cockroaches; i++) {
-        if (cockroaches[i] != nullptr) delete cockroaches[i];
-        cockroaches[i] = new Cockroach(i);
+        cockroaches[i] = Cockroach(i);
     }
     cockroaches_stats(0);
     if (!get_bets(num_cockroaches)) {
@@ -71,14 +48,14 @@ bool Competition::simulate_race(int n) {
     RaceState res = IN_PROGRESS;
     while (res == IN_PROGRESS) {
         for (int i = 0; i < num_cockroaches; i++) {
-            cockroaches[i]->print_track(TRACK_LENGTH);
+            cockroaches[i].print_track(TRACK_LENGTH);
         }
         cockroaches_stats(1);
         res = tick();
         clear_time(3);
     }
 
-    cout << "The and of the race!\n";
+    cout << "The end of the race!\n";
     if (res == NOBODY_LEFT) {
         cout << "No cockroaches can race anymore.\n";
     } else {
@@ -95,9 +72,9 @@ RaceState Competition::tick() {
     winner = -1;
     int mx = 0;
     for (int i = 0; i < num_cockroaches; i++) {
-        cockroaches[i]->randomize();
-        cockroaches[i]->move();
-        int x = cockroaches[i]->get_coord();
+        cockroaches[i].randomize();
+        cockroaches[i].move();
+        int x = cockroaches[i].get_coord();
         if (x >= TRACK_LENGTH && x > mx) {
             mx = x;
             winner = i;
@@ -105,7 +82,7 @@ RaceState Competition::tick() {
     }
     int cnt = 0;
     for (int i = 0; i < num_cockroaches; i++) {
-        if (!cockroaches[i]->can_move()) cnt++;
+        if (!cockroaches[i].can_move()) cnt++;
     }
     if (cnt == num_cockroaches) return NOBODY_LEFT;
     return winner == -1 ? IN_PROGRESS : WINNER_FOUND;
@@ -118,7 +95,7 @@ bool Competition::get_bets(int n) {
     }
     prize = 0;
     for (int i = 0; i < num_players; i++) {
-        prize += players[i]->make_bet(n);
+        prize += players[i].make_bet(n);
     }
     if (prize == 0) {
         cout << "All of other players don't have money.\n";
@@ -135,8 +112,8 @@ void Competition::give_prizes() {
     int cnt = 0;
     int winner_bet = 0;
     for (int i = 0; i < num_players; i++) {
-        if (players[i]->get_bet_for() == winner) {
-            winner_bet += players[i]->get_bet_with();
+        if (players[i].get_bet_for() == winner) {
+            winner_bet += players[i].get_bet_with();
         }
     }
     if (main_player.bet_for == winner) {
@@ -149,23 +126,23 @@ void Competition::give_prizes() {
     }
     
     for (int i = 0; i < num_players; i++) {
-        if (players[i]->get_bet_for() == winner) {
-            players[i]->add_prize(players[i]->get_bet_with()*prize/winner_bet);
+        if (players[i].get_bet_for() == winner) {
+            players[i].add_prize(players[i].get_bet_with()*prize/winner_bet);
         } else {
-            players[i]->add_prize(0);
+            players[i].add_prize(0);
         }
     }
 }
 
 void Competition::cockroaches_stats(bool is_racing) const {
     for (int i = 0; i < num_cockroaches; i++) {
-        cockroaches[i]->print_stats(is_racing);
+        cockroaches[i].print_stats(is_racing);
     }
 }
 
 void Competition::players_stats() const {
     for (int i = 0; i < num_players; i++) {
-        players[i]->print_stats();
+        players[i].print_stats();
     }
     cout << "\nYou:\n";
     cout << "amount of money: " << main_player.money << 

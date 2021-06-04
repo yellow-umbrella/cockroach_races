@@ -1,6 +1,6 @@
 class Cockroach {
 public:
-    Cockroach(int id);
+    Cockroach(int id = -1);
     void randomize();
     void move();
     bool can_move() const;
