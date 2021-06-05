@@ -1,3 +1,6 @@
+#ifndef _COCKROACH_HPP_
+#define _COCKROACH_HPP_
+
 class Cockroach {
 public:
     Cockroach(int id = -1);
@@ -19,3 +22,5 @@ private:
     static const int MAX_NUM_LEGS = 6;
     static const int MAX_NUM_EYES = 2;
 };
+
+#endif

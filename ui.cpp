@@ -5,8 +5,6 @@
 #include <iostream>
 using namespace std;
 
-UI::UI() : money(2000) {}
-
 void UI::start() {
     print_title();
     clear_enter();
@@ -14,7 +12,7 @@ void UI::start() {
 }
 
 void UI::open_menu() {
-    print_menu();
+    print_menu(main_player);
     int command = input_int("Choose option", 0, 2);
     clear_time(0);
     if (command == 1) {
@@ -27,15 +25,15 @@ void UI::open_menu() {
 
 void UI::open_competition() {
     Competition competition;
-    competition.init(money);
-    money = competition.run();
+    competition.init(main_player);
+    main_player = competition.run();
     clear_enter();
     open_menu();
 }
 
 void UI::open_maze() {
-    Maze maze(3);
-    maze.run();
+    Maze maze;
+    main_player = maze.run(main_player);
     clear_enter();
     open_menu();
 }

@@ -116,7 +116,7 @@ void print_start() {
     clear_time(2);
 }
 
-void print_menu() {
+void print_menu(MainPlayer player) {
     string tmp = R"(
   __ _  ___ ___  __ __
  /  ' \/ -_) _ \/ // /
@@ -124,4 +124,6 @@ void print_menu() {
 
     )";
     cout << tmp;
+    cout << "\nmoney: " << player.money << "     wins: " << player.wins << "\n";
+    cout << "\n1: RACE\n\n2: MAZE\n\n0: QUIT\n\n";
 }

@@ -1,10 +1,9 @@
 #include <iostream>
 #include "competition.hpp"
-#include "utilities.hpp"
 
 using namespace std;
 
-void Competition::init(int money) {
+void Competition::init(MainPlayer player) {
     num_races = input_int("Enter number of races", 1, MAX_NUM_RACES);
     num_players = input_int("Enter number of players", 1, MAX_NUM_PLAYERS);
     num_cockroaches = input_int("Enter number of cockroaches in one race", 2, MAX_NUM_COCKROACHES);
@@ -14,23 +13,21 @@ void Competition::init(int money) {
         players.push_back(Player(i, MAX_NUM_RACES));
     }
     cockroaches.resize(num_cockroaches);
-    main_player.money = money;
-    main_player.wins = 0;
-    main_player.last_prize = 0;
+    main_player = player;
     cout << "All players:\n";
     players_stats();
     clear_enter();
 }
 
 
-int Competition::run() {
+MainPlayer Competition::run() {
     for (int i = 0; i < num_races; i++) {
         if (!simulate_race(i)) {
             break;
         }
     }
     cout << "The end of competition!\n";
-    return main_player.money;
+    return main_player;
 }
 
 bool Competition::simulate_race(int n) {

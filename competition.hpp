@@ -1,6 +1,12 @@
+#ifndef _COMPETITION_HPP_
+#define _COMPETITION_HPP_
+
 #include "player.hpp"
 #include "cockroach.hpp"
+#include "utilities.hpp"
 #include <vector>
+
+using namespace std;
 
 enum RaceState {
     WINNER_FOUND, 
@@ -11,9 +17,9 @@ enum RaceState {
 class Competition {
 public:
     Competition() = default;
-    void init(int money);
+    void init(MainPlayer player);
 
-    int run();
+    MainPlayer run();
     bool simulate_race(int n);
     RaceState tick();
 
@@ -28,13 +34,7 @@ private:
     static const int MAX_NUM_PLAYERS = 5;
     static const int MAX_NUM_COCKROACHES = 5;
 
-    struct {
-        int money;
-        int wins;
-        int bet_for;
-        int bet_with;
-        int last_prize;
-    } main_player;
+    MainPlayer main_player;
 
     int num_players;
     int num_cockroaches;
@@ -42,7 +42,9 @@ private:
     int prize;
     int winner;
 
-    std::vector<Player> players;
-    std::vector<Cockroach> cockroaches;
+    vector<Player> players;
+    vector<Cockroach> cockroaches;
 };
+
+#endif
 
